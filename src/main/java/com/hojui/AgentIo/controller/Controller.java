@@ -1,5 +1,7 @@
 package com.hojui.AgentIo.controller;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,23 +12,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hojui.AgentIo.dto.LlmChangeRequest;
 import com.hojui.AgentIo.dto.PermissionChangeRequest;
+import com.hojui.AgentIo.model.UserEntity;
 import com.hojui.AgentIo.service.UserService;
-
-import lombok.RequiredArgsConstructor;
 
 
 @RestController
 @RequestMapping("/api")
-@RequiredArgsConstructor
 public class Controller {
 
     private final UserService userService;
+
+    public Controller(UserService userService) {
+        this.userService = userService;
+    }
 
 
     
     @GetMapping
     public String hello() {
         return "Welcome to fluffy cat agent world. You must feed thish cat very well everyday for good poo";
+    }
+
+    @GetMapping("/users")
+    public List<UserEntity> GetUsers(){
+        return userService.fetchAllUsers();
     }
 
     @GetMapping("/users/{userId}")
