@@ -5,22 +5,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hojui.AgentIo.model.UserEntity;
-import com.hojui.AgentIo.service.UserService;
+import com.hojui.AgentIo.dto.LoginRequestDTO;
+import com.hojui.AgentIo.service.AuthService;
 // @Controller
 @RestController 
 public class LoginController {
-
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login"; // @Controller를 사용하면 login이란 이름의 페이지로 이동하게 됨. 
+    
+    private final AuthService authService;
+    
+    public LoginController(AuthService authService) {
+        this.authService = authService;
     }
 
-    @PostMapping("/logging")
-    public String logging(@RequestBody UserEntity user){
-        return UserService.JwtVerify();
+    // @GetMapping("/login")
+    // public String loginPage() {
+    //     return "login"; // @Controller를 사용하면 login이란 이름의 페이지로 이동하게 됨. 
+    // }
 
-        return "Success";
+    @PostMapping("/logging")
+    public String logging(@RequestBody LoginRequestDTO loginRequest){
+        return authService.jwtVerify(loginRequest);
+
+        // return "Success";
     }
 
 }

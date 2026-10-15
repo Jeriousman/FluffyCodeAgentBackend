@@ -13,5 +13,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     // https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html
     Optional<UserEntity> findByUsername(String username);
 
+    // OAuth2 user info 
+    Optional<UserEntity> findByProviderAndProviderId(String provider, String providerId);
+
     
 }
