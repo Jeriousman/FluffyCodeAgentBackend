@@ -9,7 +9,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.hojui.AgentIo.dto.UserRequestDTO;
+import com.hojui.AgentIo.dto.UserRequest;
+import com.hojui.AgentIo.model.EffortMode;
+import com.hojui.AgentIo.model.LlmMode;
+import com.hojui.AgentIo.model.PermissionMode;
 import com.hojui.AgentIo.model.UserEntity;
 import com.hojui.AgentIo.model.UserRole;
 import com.hojui.AgentIo.repository.UserRepository;
@@ -26,10 +29,52 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void changeLlmModel(Integer userId, String modelName) {
+
+
+    /// 
+    /// 
+    /// 
+    /// 
+    ///  USER's PERMISSION, MODEL, EFFORT Change
+    /// 
+    /// 
+    /// 
+    ///////////////////////
+    // user llm model change update
+    public void changeLlmModel(String username, LlmMode modelName) {
         // Logic to change the LLM model for the user (not yet implemented)
-        System.out.println("Changing LLM model for user " + userId + " to " + modelName);
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        user.setLlmModel(modelName);
+        userRepository.save(user);
     }
+
+    // user llm permission update
+    public void changePermissionMode(String username, PermissionMode permissionMode) {
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        user.setPermissionMode(permissionMode);
+        userRepository.save(user);
+    }
+
+
+    public void changeEffortMode(String username, EffortMode effortMode) {
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        user.setEffort(effortMode);
+        userRepository.save(user);
+
+    }
+
+    ///////////////////////
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+
+
+
+
+
 
     public String fetchUserEmail(Integer userId){
         UserEntity userInfo = userRepository.findById(userId).orElse(new UserEntity());
@@ -38,11 +83,11 @@ public class UserService implements UserDetailsService {
 
 
     // user sing up method
-    public void userSignUp(UserRequestDTO userRequestDTO) {
+    public void userSignUp(UserRequest userRequest) {
         
-        String username = userRequestDTO.getUsername();
-        String password = userRequestDTO.getPassword();
-        String email = userRequestDTO.getEmail();
+        String username = userRequest.getUsername();
+        String password = userRequest.getPassword();
+        String email = userRequest.getEmail();
 
         UserEntity user = new UserEntity();
         user.setUsername(username);
@@ -70,7 +115,5 @@ public class UserService implements UserDetailsService {
     public List<UserEntity> fetchAllUsers() {
         return userRepository.findAll();
     }
-
-
 
 }

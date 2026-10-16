@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hojui.AgentIo.dto.UserRequestDTO;
+import com.hojui.AgentIo.dto.UserRequest;
 import com.hojui.AgentIo.service.UserService;
 
 // @Controller 
@@ -26,8 +26,8 @@ public class UserSignUpController {
 
     // The information given by users is sent to backend.
     @PostMapping("/signup")
-    public String signUp(@RequestBody UserRequestDTO userRequestDTO) {
-        userService.userSignUp(userRequestDTO);
+    public String signUp(@RequestBody UserRequest userRequest) {
+        userService.userSignUp(userRequest);
         return "redirect:/"; // Redirect to login page after successful sign-up
     }
 

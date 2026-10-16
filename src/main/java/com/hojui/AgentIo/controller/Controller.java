@@ -2,6 +2,7 @@ package com.hojui.AgentIo.controller;
 
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,26 +45,10 @@ public class Controller {
         return "Hello User: " + userId;
     }
 
-    @GetMapping("/users/{userId}/sessions")
-    // Get all the sessions for user to choose
-    public String getResponse(){
-        // System.out.println("Input Text: " + inputText);
-        return "Your session ID is: Meh LOL";
-    }
-
     @GetMapping ("/users/{userId}/email")
     public String getUserEmail(@PathVariable Integer userId){
         return userService.fetchUserEmail(userId);
     }
-
-
-
-
-
-
-
-
-
     // 작업제출
 
     // 1. Query a question to agent
@@ -75,22 +60,33 @@ public class Controller {
 
 
 
-    // 2. Set effort level to agent
-    @PatchMapping ("/users/{userId}/llm-model")
-    public String submitChangeLlmModel(
-        @PathVariable("userId") Integer userId,
+    // 2. Set a model level to agent
+    @PatchMapping ("/users/me/model")   // /users/{userId} 을 쓰지 않고 /users/me를 써서 유저아이디를 노출시키지 않음.
+    public void submitChangeLlmModel(
+        Authentication authentication,
         @RequestBody LlmChangeRequest request
     ) 
     {
+        String username = authentication.getName();
         // Actual llm model change logic should be implemented here.
-        userService.changeLlmModel(userId, request.getModelName());
-        return "Model changed to: " + request.getModelName();
- 
+        userService.changeLlmModel(username, request.getModelName());
+        // return "Model changed to: " + request.getModelName();
     }
 
-    // 3. Set permission mode to agent (auto or manual)
+    // Set permission mode to agent (auto or manual)
+    @PatchMapping("/users/me/permission")
+    public void submitChangePermissionMode(
+        Authentication authentication,
+        @RequestBody PermissionChangeRequest request
+    )
+    {
+        String username = authentication.getName();
+        userService.changePermissionMode(username, request.getPermissionMode());
+    }
 
-    @PatchMapping("/users/{userId}/permission-mode")
+
+    // 3. Set permission mode to agent (auto or manual)
+    @PatchMapping("/users/me/permissions/{permission}")
     public String submitChangePermissionMode(
         @PathVariable ("userId") String userId,
         @RequestBody PermissionChangeRequest request

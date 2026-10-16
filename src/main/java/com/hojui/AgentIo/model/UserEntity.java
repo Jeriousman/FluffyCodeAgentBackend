@@ -39,6 +39,15 @@ public class UserEntity {
     private String provider;
     @Column(unique = true, name= "provider_id")
     private String providerId;
+
+    // User choice of llm model
+    @Enumerated(EnumType.STRING)
+    private LlmMode llmModel = LlmMode.OPUS;
+    // User choice of llm model efforts
+    private EffortMode effort = EffortMode.MEDIUM;
+
+    @Enumerated(EnumType.STRING)
+    private PermissionMode permissionMode = PermissionMode.MANUAL;
     
 
     

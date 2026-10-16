@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hojui.AgentIo.dto.LoginRequestDTO;
+import com.hojui.AgentIo.dto.LoginRequest;
 import com.hojui.AgentIo.service.AuthService;
 // @Controller
 @RestController 
@@ -23,7 +23,7 @@ public class LoginController {
     // }
 
     @PostMapping("/logging")
-    public String logging(@RequestBody LoginRequestDTO loginRequest){
+    public String logging(@RequestBody LoginRequest loginRequest){
         return authService.jwtVerify(loginRequest);
 
         // return "Success";

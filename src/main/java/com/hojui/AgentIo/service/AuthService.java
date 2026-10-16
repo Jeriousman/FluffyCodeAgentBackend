@@ -5,7 +5,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import com.hojui.AgentIo.dto.LoginRequestDTO;
+import com.hojui.AgentIo.dto.LoginRequest;
 
 // 로그인 검사 + JWT 발급 담당.
 // AuthenticationManager는 UserService(UserDetailsService)를 사용해서 만들어지기 때문에
@@ -22,7 +22,7 @@ public class AuthService {
     }
 
     // JWT authentication
-    public String jwtVerify(LoginRequestDTO loginRequest) {
+    public String jwtVerify(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         if(authentication.isAuthenticated())
             return jwtService.generateToken(loginRequest.getUsername());

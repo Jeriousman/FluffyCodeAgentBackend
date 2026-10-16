@@ -1,33 +1,33 @@
 package com.hojui.AgentIo.dto;
 
+import com.hojui.AgentIo.model.PermissionMode;
 
 /**
  * PermissionChangeRequest
  */
 public class PermissionChangeRequest {
 
-    private PermissionModeType permissionMode;
+    private PermissionMode permissionMode;
 
-    public PermissionChangeRequest(PermissionModeType permissionMode) {
+    public PermissionChangeRequest(PermissionMode permissionMode) {
         this.permissionMode = permissionMode;
     }
 
-    public PermissionModeType getPermissionMode() {
+    public PermissionMode getPermissionMode() {
         return permissionMode;
     }
 
-    public void setPermissionMode(PermissionModeType permissionMode) {
+    public void setPermissionMode(PermissionMode permissionMode) {
         this.permissionMode = permissionMode;
+    }
+
+    @Override
+    public String toString() {
+        return "PermissionChangeRequest [permissionMode=" + permissionMode + "]";
     }
     
 
 
-    // public PermissionChangeRequest() {
-    //     System.out.println("PermissionChangeRequest");
-    // }
 
-    // public PermissionModeType  
-    
-    
 }
 
