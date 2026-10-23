@@ -10,6 +10,7 @@ import java.beans.BeanProperty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +26,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 @Configuration 
 @EnableWebSecurity //@EnableWebSecurity는 "이 애플리케이션에서 Spring Security 웹 보안 기능을 켜라" 는 스위치입니다. 이게 켜지면 Spring Security가 동작하는 데 필요한 기본 부품들이 준비돼요.
@@ -107,7 +111,15 @@ public class SecurityConfig {
         http
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
+        // /api/** 는 REST API → 로그인 안 된 요청이면 로그인 페이지로 302 리다이렉트하지 말고 401 (인증실패 Unautorized)만 반환 
+        http
+            .exceptionHandling(ex -> ex
+                .defaultAuthenticationEntryPointFor(
+                    new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),          // 무엇을: 401만 응답
+                    PathPatternRequestMatcher.withDefaults().matcher("/api/**") // 어디에: /api/** 요청에만
+                ));
 
+        // 권한이나 아이디에 따라 인가/허용 필터 설정
 
         // 권한이나 아이디에 따라 인가/허용 필터 설정
         http
@@ -117,6 +129,7 @@ public class SecurityConfig {
             .requestMatchers("/login").permitAll()
             .requestMatchers("/error").permitAll()     // ← 추가
             .requestMatchers("/logging").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")   // This users checking should only be for ADMIN
             .requestMatchers("/api/**").authenticated()     // /api: 토큰 있어야 접근 가능
             .requestMatchers("/user").hasAnyRole("USER", "ADMIN") // Anyone from USER and ADMIN can
             .requestMatchers("/admin").hasRole("ADMIN")  // Only ADMIN can (아래 access와 중복되면 먼저 매칭된 이 줄만 적용됨)

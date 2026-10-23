@@ -3,6 +3,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 
 @Data 
 @Entity
@@ -30,7 +33,8 @@ public class UserEntity {
     private LocalDateTime createdAt;
     @Column(unique = true)
     private String username;
-
+    
+    @JsonIgnore              // JSON으로 절대 나가지 않게
     private String password;
     @Enumerated(EnumType.STRING) // Store enum as string in DB.  @Enumerated는 Java의 enum 필드를 DB 컬럼에 어떤 형태로 저장할지 JPA에게 알려주는 어노테이션
     private UserRole role; // User role, e.g., "USER", "ADMIN"
@@ -42,18 +46,21 @@ public class UserEntity {
 
     // User choice of llm model
     @Enumerated(EnumType.STRING)
-    private LlmMode llmModel = LlmMode.OPUS;
+    @Column(nullable = false)
+    @ColumnDefault("'OPUS'")          // DDL에 DEFAULT 'OPUS' 생성
+    private LlmModel llmModel = LlmModel.OPUS;
+
     // User choice of llm model efforts
-    private EffortMode effort = EffortMode.MEDIUM;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @ColumnDefault("'MEDIUM'")
+    private EffortMode effortMode = EffortMode.MEDIUM;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @ColumnDefault("'MANUAL'")
     private PermissionMode permissionMode = PermissionMode.MANUAL;
     
 
-    
-    public UserEntity orElseThrow() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
-    }
 
 }

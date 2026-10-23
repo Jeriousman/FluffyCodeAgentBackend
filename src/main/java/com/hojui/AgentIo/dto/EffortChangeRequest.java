@@ -1,12 +1,12 @@
 package com.hojui.AgentIo.dto;
-
+import jakarta.validation.constraints.NotNull;   // ← 추가
 import com.hojui.AgentIo.model.EffortMode;
 
 /**
  * EffortChangeRequest
  */
 public class EffortChangeRequest {
-    
+    @NotNull(message = "effortMode는 필수입니다")
     private EffortMode effortMode;
 
     public EffortChangeRequest(EffortMode effortMode) {

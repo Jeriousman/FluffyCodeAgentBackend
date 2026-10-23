@@ -1,12 +1,12 @@
 package com.hojui.AgentIo.dto;
-
+import jakarta.validation.constraints.NotNull;   // ← 추가
 import com.hojui.AgentIo.model.PermissionMode;
 
 /**
  * PermissionChangeRequest
  */
 public class PermissionChangeRequest {
-
+    @NotNull(message = "permissionMode는 필수입니다")
     private PermissionMode permissionMode;
 
     public PermissionChangeRequest(PermissionMode permissionMode) {

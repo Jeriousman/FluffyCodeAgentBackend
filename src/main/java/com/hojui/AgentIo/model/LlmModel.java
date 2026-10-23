@@ -1,10 +1,10 @@
 package com.hojui.AgentIo.model;
 
-public enum LlmMode {
+public enum LlmModel {
     SONNET,
     OPUS,
-    GPT,
-    
+    GPT;
+
 
     
 

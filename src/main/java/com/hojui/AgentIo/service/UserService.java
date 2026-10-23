@@ -10,8 +10,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.hojui.AgentIo.dto.UserRequest;
+import com.hojui.AgentIo.dto.UserResponse;
 import com.hojui.AgentIo.model.EffortMode;
-import com.hojui.AgentIo.model.LlmMode;
+import com.hojui.AgentIo.model.LlmModel;
 import com.hojui.AgentIo.model.PermissionMode;
 import com.hojui.AgentIo.model.UserEntity;
 import com.hojui.AgentIo.model.UserRole;
@@ -41,10 +42,10 @@ public class UserService implements UserDetailsService {
     /// 
     ///////////////////////
     // user llm model change update
-    public void changeLlmModel(String username, LlmMode modelName) {
+    public void changeLlmModel(String username, LlmModel llmModel) {
         // Logic to change the LLM model for the user (not yet implemented)
         UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-        user.setLlmModel(modelName);
+        user.setLlmModel(llmModel);
         userRepository.save(user);
     }
 
@@ -58,7 +59,7 @@ public class UserService implements UserDetailsService {
 
     public void changeEffortMode(String username, EffortMode effortMode) {
         UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-        user.setEffort(effortMode);
+        user.setEffortMode(effortMode);
         userRepository.save(user);
 
     }
@@ -73,7 +74,11 @@ public class UserService implements UserDetailsService {
 
 
 
-
+    public UserResponse getMe(String username) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return UserResponse.from(user);
+    }
 
 
     public String fetchUserEmail(Integer userId){
@@ -103,7 +108,7 @@ public class UserService implements UserDetailsService {
     // Fetch user information from DB then build the info into Spring User object (This is automatically called in formLogin in SecurityConfig)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
 
-        UserEntity user = userRepository.findByUsername(username).orElseThrow();
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
         return User.builder()
                 .username(user.getUsername())
@@ -112,8 +117,14 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public List<UserEntity> fetchAllUsers() {
-        return userRepository.findAll();
+    // public List<UserEntity> fetchAllUsers() {
+    //     return userRepository.findAll();
+    // }
+
+    // 유저 비밀번호 같은 민감정보 제외하고 전달
+    public List<UserResponse> fetchAllUsers() {
+        return userRepository.findAll().stream().map(UserResponse::from).toList();
     }
+
 
 }

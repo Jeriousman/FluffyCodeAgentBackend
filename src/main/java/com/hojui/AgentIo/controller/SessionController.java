@@ -1,34 +1,36 @@
-package com.hojui.AgentIo.controller;
+// package com.hojui.AgentIo.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+// import org.springframework.web.bind.annotation.GetMapping;
+// import org.springframework.web.bind.annotation.RequestMapping;
+// import org.springframework.web.bind.annotation.RestController;
 
-@RestController 
-@RequestMapping("/api")
-public class SessionController {
+// import com.hojui.AgentIo.service.SessionService;
 
-    private final SessionService sessionService;
+// @RestController 
+// @RequestMapping("/api")
+// public class SessionController {
 
-    public SessionController(SessionService sessionService) {
-        this.sessionService = sessionService;
-    }
+//     private final SessionService sessionService;
 
-    
-    @GetMapping("/v1/sessions")
-    List<Session> getSessions(){
-        return ''
-    }
-
-    @GetMapping("/v1/sessions/{sessionId}")
-    Session getSession(){
-        return ''
-    }
+//     public SessionController(SessionService sessionService) {
+//         this.sessionService = sessionService;
+//     }
 
     
+    // @GetMapping("/v1/sessions")
+    // List<Session> getSessions(){
+    //     return 
+    // }
 
-
+    // @GetMapping("/v1/sessions/{sessionId}")
+    // Session getSession(){
+    //     return ''
+    // }
 
     
 
-}
+
+
+    
+
+// }

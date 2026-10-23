@@ -18,6 +18,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import io.jsonwebtoken.JwtException;                                         
+import org.springframework.security.core.userdetails.UsernameNotFoundException;  
 /**
  * JwtFilter
  */
@@ -43,23 +45,31 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
+        try{
+            if(authHeader != null &&  authHeader.startsWith("Bearer ")){
+                token = authHeader.substring(7); //Skip Bearer part
+                username = jwtService.extractUserName(token);
+            }
 
-        if(authHeader != null &&  authHeader.startsWith("Bearer ")){
-            token = authHeader.substring(7); //Skip Bearer part
-            username = jwtService.extractUserName(token);
+
+            if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){ //username이 존재하면서 이미 인증허가가 되지 않은 경우에만, 
+                UserDetails userDetails = applicationContext.getBean(UserService.class).loadUserByUsername(username); // getBean(UserService.class) 은 UserService의 객체를 돌려주기 때문에 loadUserByUsername을 바로 . 으로 이어서 사용가능 
+
+                if (jwtService.validateToken(token, userDetails)){  // JWT token 
+
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
         }
-
-
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){ //username이 존재하면서 이미 인증허가가 되지 않은 경우에만, 
-            UserDetails userDetails = applicationContext.getBean(UserService.class).loadUserByUsername(username); // getBean(UserService.class) 은 UserService의 객체를 돌려주기 때문에 loadUserByUsername을 바로 . 으로 이어서 사용가능 
-
-            if (jwtService.validateToken(token, userDetails)){  // JWT token 
-
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-        }
+    } catch (JwtException | IllegalArgumentException | UsernameNotFoundException e) {
+        // JwtException: 형식이 깨졌거나(abc), 서명이 틀렸거나, 만료된 토큰
+        // IllegalArgumentException: "Bearer " 뒤가 비어 있는 경우
+        // UsernameNotFoundException: 토큰은 맞는데 그 유저가 DB에서 삭제된 경우
+        // → 인증 정보 없이 다음 단계로 넘김. /api/**는 3번 설정에 의해 401 응답
+        SecurityContextHolder.clearContext();
     }
+
     filterChain.doFilter(request, response);
 
     }

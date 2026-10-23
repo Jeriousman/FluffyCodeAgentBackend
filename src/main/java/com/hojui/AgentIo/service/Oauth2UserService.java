@@ -1,5 +1,6 @@
 package com.hojui.AgentIo.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import com.hojui.AgentIo.model.UserEntity;
 import com.hojui.AgentIo.model.UserRole;
 import com.hojui.AgentIo.repository.UserRepository;
+
+
 
 @Service 
 public class Oauth2UserService extends DefaultOAuth2UserService{
@@ -57,13 +60,24 @@ public class Oauth2UserService extends DefaultOAuth2UserService{
                 });
 
         // 5. 우리 DB의 role로 권한을 붙여서 반환 → hasRole("USER") 같은 규칙을 통과할 수 있게 됨
-        String nameAttributeKey = userRequest.getClientRegistration()
-                .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName(); // github: "id", google: "sub"
+        // String nameAttributeKey = userRequest.getClientRegistration()
+        //         .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName(); // github: "id", google: "sub"
+
+        // return new DefaultOAuth2User(
+        //         List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())), // List.of("a", "b", "c")     // ["a", "b", "c"]      .       SimpleGrantedAuthority -> 
+        //         attributes,
+        //         nameAttributeKey);
+
+
+        // 5. attributes에 우리 DB username을 넣고, 그 키를 name으로 지정
+        //    → authentication.getName() == "github_12345" (DB username과 동일)
+        Map<String, Object> attrs = new HashMap<>(attributes); // 원본 Map은 수정 불가라서 복사
+        attrs.put("username", user.getUsername());
 
         return new DefaultOAuth2User(
-                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())), // List.of("a", "b", "c")     // ["a", "b", "c"]      .       SimpleGrantedAuthority -> 
-                attributes,
-                nameAttributeKey);
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())),
+                attrs,
+                "username");   // getName()이 attrs.get("username")을 반환
 
 
 

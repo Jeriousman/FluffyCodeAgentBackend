@@ -1,5 +1,7 @@
 package com.hojui.AgentIo.service;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 import com.hojui.AgentIo.model.SessionEntity;
@@ -12,7 +14,7 @@ import com.hojui.AgentIo.repository.SessionRepository;
 @Service 
 public class SessionService {
     private final SessionRepository sessionRepository;
-    private final SessionEntity sessionEntity;
+    // private final SessionEntity sessionEntity;
 
 
 
@@ -20,8 +22,8 @@ public class SessionService {
         this.sessionRepository = sessionRepository;
     }
 
-    public void GetSession(String username, ){
-        sessionRepository.findByPublicIdAndUser_Username(username, sessionEntity.getPublicId());
+    public void getSession(String username, UUID publicId){
+        sessionRepository.findByPublicIdAndUser_Username(username, publicId);
 
 
         }

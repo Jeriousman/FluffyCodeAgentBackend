@@ -1,28 +1,28 @@
 package com.hojui.AgentIo.dto;
-import com.hojui.AgentIo.model.LlmMode;
-
+import com.hojui.AgentIo.model.LlmModel;
+import jakarta.validation.constraints.NotNull;   // ← 추가
 public class LlmChangeRequest {
-
-    private LlmMode modelName;
+    @NotNull(message = "llmModel은 필수입니다")
+    private LlmModel llmModel;
 
     public LlmChangeRequest() {
     }
 
-    public LlmChangeRequest(LlmMode modelName) {
-        this.modelName = modelName;
+    public LlmChangeRequest(LlmModel llmModel) {
+        this.llmModel = llmModel;
     }
 
-    public LlmMode getModelName() {
-        return modelName;
+    public LlmModel getLlmModel() {
+        return llmModel;
     }
 
-    public void setModelName(LlmMode modelName) {
-        this.modelName = modelName;
+    public void setLlmModel(LlmModel llmModel) {
+        this.llmModel = llmModel;
     }
 
     @Override
     public String toString() {
-        return "LlmChangeRequest [modelName=" + modelName + "]";
+        return "LlmChangeRequest [llmModel=" + llmModel + "]";
     }
 
 }
